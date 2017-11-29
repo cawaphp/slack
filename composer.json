@@ -1,0 +1,27 @@
+{
+    "name": "cawaphp/slack",
+    "description": "Сáша Slack",
+    "keywords": [
+        "cawa",
+        "slack"
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "tchiotludo"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Cawa\\Slack\\": "src"
+        }
+    },
+    "require": {
+        "php": "~7.1",
+        "cawaphp/cawa" : "dev-master",
+        "cawaphp/httpclient" : "dev-master",
+        "cawaphp/serializer" : "dev-master"
+    }
+}
