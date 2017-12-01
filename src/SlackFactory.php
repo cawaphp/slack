@@ -37,6 +37,10 @@ trait SlackFactory
             $item->setEndpoint($config['endpoint']);
         }
 
+        if (isset($config['transport'])) {
+            $item->setTransport(new $config['transport']());
+        }
+
         if (isset($config['username'])) {
             $item->setDefaultUsername($config['username']);
         }

@@ -7,7 +7,10 @@ Some breaking change will occure. Thank's for your comprehension.
 
 ## Features
 * Simple fluent api to send message to slack webhook
-
+* 2 transports available : 
+  * Simple http client
+  * Queue based transport 
+ 
 ## About
 
 ### License

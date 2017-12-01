@@ -13,33 +13,32 @@ declare(strict_types = 1);
 
 namespace Cawa\Slack;
 
-use Cawa\Http\Request;
-use Cawa\HttpClient\HttpClientFactory;
-use Cawa\Net\Uri;
 use Cawa\Serializer\Json;
 use Cawa\Slack\Message\Message;
+use Cawa\Slack\Transport\Http;
+use Cawa\Slack\Transport\TransportInterface;
 
 class Webhook
 {
-    use HttpClientFactory;
-
     /**
      * @param string $endpoint
+     * @param TransportInterface|null $transport
      */
-    public function __construct(string $endpoint = null)
+    public function __construct(string $endpoint = null, TransportInterface $transport = null)
     {
         $this->endpoint = $endpoint;
+        $this->transport = $transport ?: new Http();
     }
 
     /**
-     * The Slack incoming webhook endpoint.
+     * The Slack incoming webhook url
      *
      * @var string
      */
     protected $endpoint;
 
     /**
-     * Get the Slack endpoint.
+     * Get the Slack endpoint url.
      *
      * @return string
      */
@@ -49,7 +48,7 @@ class Webhook
     }
 
     /**
-     * Set the Slack endpoint.
+     * Set the Slack endpoint url.
      *
      * @param string $endpoint
      *
@@ -58,6 +57,37 @@ class Webhook
     public function setEndpoint($endpoint) : self
     {
         $this->endpoint = $endpoint;
+
+        return $this;
+    }
+
+    /**
+     * The Slack incoming webhook transport.
+     *
+     * @var string
+     */
+    protected $transport;
+
+    /**
+     * Get the Slack transport.
+     *
+     * @return string
+     */
+    public function getTransport() : string
+    {
+        return $this->transport;
+    }
+
+    /**
+     * Set the Slack transport.
+     *
+     * @param string $transport
+     *
+     * @return $this
+     */
+    public function setTransport($transport) : self
+    {
+        $this->transport = $transport;
 
         return $this;
     }
@@ -189,15 +219,8 @@ class Webhook
     public function send(Message $message) : bool
     {
         $payload = $message->toArray();
+        $json = Json::encode($payload, JSON_UNESCAPED_UNICODE);
 
-        $request = (new Request(new Uri($this->endpoint)))
-            ->setMethod('POST')
-            ->setPayload(Json::encode($payload, JSON_UNESCAPED_UNICODE))
-            ->addHeader('Content-type', 'application/json')
-        ;
-
-        $return = self::httpClient(self::class)->send($request);
-
-        return $return->getBody() === 'ok';
+        return $this->transport->send($this->endpoint, $json);
     }
 }
